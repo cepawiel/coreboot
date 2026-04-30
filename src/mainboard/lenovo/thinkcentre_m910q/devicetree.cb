@@ -1,0 +1,226 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+chip soc/intel/skylake
+	register "eist_enable" = "true"
+	register "deep_sx_config" = "DSX_EN_LAN_WAKE_PIN"
+	register "WakeConfigWolEnableOverride" = "true"
+	register "WakeConfigPcieWakeFromDeepSx" = "true"
+
+	device domain 0 on
+		device ref peg0         on	# PCIE16X
+			smbios_slot_desc "SlotTypePciExpressGen3X16"
+			                 "SlotLengthLong"
+			                 "PCIE16X"
+			                 "SlotDataBusWidth16X"
+		end
+		device ref igpu		on  end
+		device ref south_xhci	on
+			register "usb2_ports" = "{
+				[0]  = USB2_PORT_MID(OC1),	// USB30A
+				[1]  = USB2_PORT_MID(OC1),	// USB30B
+				[2]  = USB2_PORT_MID(OC2),	// F_USB30_1A
+				[3]  = USB2_PORT_MID(OC2),	// F_USB30_1B
+				[4]  = USB2_PORT_MID(OC3),	// F_USB30_2A
+				[5]  = USB2_PORT_MID(OC3),	// F_USB30_2B
+				[6]  = USB2_PORT_MID(OC_SKIP),	// M.2 Bluetooth
+				[7]  = USB2_PORT_MID(OC5),	// USB_LANA
+				[8]  = USB2_PORT_MID(OC5),	// USB_LANB
+				[9]  = USB2_PORT_MID(OC_SKIP),	// F_USB1 (Pins 5, 7)
+				[10] = USB2_PORT_MID(OC_SKIP),	// F_USB1 (Pins 6, 8)
+				// Used by the SD/MMC reader.
+				[11] = USB2_PORT_MID(OC_SKIP),	// F_USB2 (Pins 5, 7)
+			}"
+			register "usb3_ports" = "{
+				[0] = USB3_PORT_DEFAULT(OC1),	// USB30A
+				[1] = USB3_PORT_DEFAULT(OC1),	// USB30B
+				[2] = USB3_PORT_DEFAULT(OC2),	// F_USB30_1A
+				[3] = USB3_PORT_DEFAULT(OC2),	// F_USB30_1B
+				[4] = USB3_PORT_DEFAULT(OC3),	// F_USB30_2A
+				[5] = USB3_PORT_DEFAULT(OC3),	// F_USB30_2B
+			}"
+
+			chip drivers/usb/acpi
+				register "desc" = ""xHCI Root Hub""
+				register "type" = "UPC_TYPE_HUB"
+				device usb 0.0 on
+					chip drivers/usb/acpi
+						register "desc"  = ""USB30A""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(1, 1)"
+						device usb 2.0	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""USB30B""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(1, 2)"
+						device usb 2.1	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_1A""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(2, 1)"
+						device usb 2.2	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_1B""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(2, 2)"
+						device usb 2.3	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_2A""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(3, 1)"
+						device usb 2.4	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_2B""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(3, 2)"
+						device usb 2.5	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""M.2 Bluetooth""
+						register "type"  = "UPC_TYPE_INTERNAL"
+						device usb 2.6	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""USB_LANA""
+						register "type"  = "UPC_TYPE_A"
+						register "group" = "ACPI_PLD_GROUP(4, 1)"
+						device usb 2.7	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""USB_LANB""
+						register "type"  = "UPC_TYPE_A"
+						register "group" = "ACPI_PLD_GROUP(4, 2)"
+						device usb 2.8	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB1 (Pins 5, 7)""
+						register "type"  = "UPC_TYPE_INTERNAL"
+						register "group" = "ACPI_PLD_GROUP(5, 1)"
+						device usb 2.9	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB1 (Pins 6, 8)""
+						register "type"  = "UPC_TYPE_INTERNAL"
+						register "group" = "ACPI_PLD_GROUP(5, 2)"
+						device usb 2.10	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB2 (Pins 5, 7)""
+						register "type"  = "UPC_TYPE_INTERNAL"
+						device usb 2.11	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""USB30A""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(1, 1)"
+						device usb 3.0	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""USB30B""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(1, 2)"
+						device usb 3.1	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_1A""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(2, 1)"
+						device usb 3.2	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_1B""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(2, 2)"
+						device usb 3.3	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_2A""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(3, 1)"
+						device usb 3.4	on end
+					end
+					chip drivers/usb/acpi
+						register "desc"  = ""F_USB30_2B""
+						register "type"  = "UPC_TYPE_USB3_A"
+						register "group" = "ACPI_PLD_GROUP(3, 2)"
+						device usb 3.5	on end
+					end
+				end
+			end
+		end
+		device ref thermal	on  end
+		device ref heci1	on  end
+		device ref sata		on
+			register "SataSalpSupport" = "true"
+			register "SataPortsEnable" = "{
+				[0] = true,	// SATA1
+				[1] = true,	// SATA2
+				[2] = true,	// SATA3
+			}"
+		end
+		device ref pcie_rp6	on	# M2_WIFI / E-key (RTL8125 in production)
+			smbios_slot_desc "SlotTypeM2Socket1_SD"
+			                 "SlotLengthOther"
+			                 "M2_WIFI"
+			                 "SlotDataBusWidth1X"
+
+			register "PcieRpClkSrcNumber[5]"           = "1"
+			register "PcieRpHotPlug[5]"                = "0"
+		end
+		device ref pcie_rp21	on	# M2_SSD
+			smbios_slot_desc "SlotTypeM2Socket3"
+			                 "SlotLengthOther"
+			                 "M2_SSD"
+			                 "SlotDataBusWidth1X"
+
+			register "PcieRpLtrEnable[20]"              = "true"
+			register "PcieRpClkReqSupport[20]"          = "true"
+			register "PcieRpClkReqNumber[20]"           = "1"
+			register "PcieRpClkSrcNumber[20]"           = "1"
+			register "PcieRpAdvancedErrorReporting[20]" = "true"
+			register "pcie_rp_aspm[20]"                 = "AspmDisabled"
+			register "pcie_rp_l1substates[20]"          = "L1SS_Disabled"
+		end
+		device ref lpc_espi	on
+			register "serirq_mode" = "SERIRQ_CONTINUOUS"
+
+			chip superio/nuvoton/nct6687d
+				device pnp 2e.1 off end		# Parallel port
+				device pnp 2e.2 off end		# UART A
+				device pnp 2e.3 on		# UART B - optional serial daughter card
+					io 0x60 = 0x3f8
+					irq 0x70 = 4
+				end
+				device pnp 2e.5 off end		# Keyboard
+				device pnp 2e.6 off end		# CIR
+				device pnp 2e.7 off end		# GPIO0-7
+				device pnp 2e.8 off end		# P80 UART
+				device pnp 2e.9 off end		# GPIO8-9, GPIO1-8 AF
+				device pnp 2e.a on		# ACPI
+					io 0x60 = 0xa10
+				end
+				device pnp 2e.b on		# EC
+					io 0x60 = 0xa20
+				end
+				device pnp 2e.c off end		# RTC
+				device pnp 2e.d off end		# Deep Sleep
+				device pnp 2e.e on		# TACH/PWM assignment
+					irq 0xe4 = 0x10
+					irq 0xe5 = 0x09
+				end
+				device pnp 2e.f off end		# Function register
+			end
+			chip drivers/pc80/tpm
+				device pnp c31.0 on  end
+			end
+		end
+		device ref pmc		on  end
+		device ref hda		on  end
+		device ref smbus	on  end
+		device ref gbe		on  end	# I219-LM (rear 1G port)
+	end
+end
